@@ -1294,7 +1294,7 @@ async function sendMessage() {
   chatInput.value = '';
 
   try {
-    const response = await fetch('https://xvo-tools.xvoidx.my.id/api/chat', {...})  // ganti URL ke backend kamu
+    const response = await fetch('http://localhost:8158/api/chat', {  // ganti URL ke backend kamu  // ganti URL ke backend kamu
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
