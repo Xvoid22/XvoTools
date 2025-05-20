@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xvo Tool</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #4f46e5;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --accent: #ec4899;
+            --success: #10b981;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo i {
+            font-size: 1.5rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        main {
+            padding: 2rem 0;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+        
+        .tool-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .tool-btn {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--dark);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tool-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tool-btn.active {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .tool-container {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 400px;
+        }
+        
+        .tool-content {
+            display: none;
+        }
+        
+        .tool-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Kalkulator */
+        .calculator {
+            max-width: 320px;
+            margin: 0 auto;
+            background: #f8fafc;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .calc-display {
+            background-color: var(--dark);
+            color: white;
+            padding: 1.5rem;
+            text-align: right;
+            font-size: 2rem;
+            font-weight: 300;
+            height: 80px;
+            overflow: hidden;
+        }
+        
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background-color: #e2e8f0;
+        }
+        
+        .calc-btn {
+            background-color: white;
+            border: none;
+            padding: 1.2rem 0;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .calc-btn:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .calc-btn.operator {
+            background-color: #f8fafc;
+            font-weight: bold;
+        }
+        
+        .calc-btn.equals {
+            background: var(--gradient);
+            color: white;
+            grid-column: span 2;
+        }
+        
+        .calc-btn.clear {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        /* Todo List */
+.todo-app {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.tool-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--dark);
+}
+
+.todo-input-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.todo-input-container input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  outline: none;
+}
+
+.todo-input-container input:focus {
+  border-color: var(--primary);
+}
+
+.todo-input-container button {
+  background: var(--gradient);
+  color: white;
+  border: none;
+  width: 45px;
+  height: 45px;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.todo-input-container button:hover {
+  transform: scale(1.05);
+}
+
+.todo-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.todo-item {
+  background-color: #f8fafc;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: fadeIn 0.3s ease;
+}
+
+.todo-item-text {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.todo-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.todo-text {
+  font-size: 1rem;
+}
+
+.todo-text.completed {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.delete-todo {
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-todo:hover {
+  transform: scale(1.1);
+}
+
+/* Responsif untuk mobile */
+@media (max-width: 768px) {
+  .todo-app {
+    padding: 0 1rem;
+  }
+  .todo-item {
+    padding: 0.75rem;
+  }
+}
+
+/* Code Snippet Tester */
+.code-tester-container {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.code-inputs {
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.code-inputs label {
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.code-inputs textarea {
+  width: 100%;
+  height: 120px;
+  padding: 0.5rem;
+  font-family: monospace;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  resize: vertical;
+}
+
+#run-code-btn {
+  margin-top: 0.5rem;
+  padding: 0.6rem;
+  background: var(--gradient);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+#run-code-btn:hover {
+  background: var(--secondary);
+}
+
+.code-preview {
+  flex: 1 1 400px;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  height: 400px;
+}
+
+#preview {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: white;
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+  .code-tester-container {
+    flex-direction: column;
+  }
+  .code-preview {
+    height: 300px;
+  }
+}
+
+.converter-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.converter-inputs input,
+.converter-inputs select,
+#convert-btn {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 0.4rem;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.currency-select {
+  display: flex;
+  flex-direction: column;
+}
+
+.currency-select label {
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+#convert-btn {
+  background: var(--gradient);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+#convert-btn:hover {
+  background: var(--secondary);
+}
+
+#qr-generator {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  margin: 2rem auto;
+}
+
+#qr-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+#generate-qr-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--gradient);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+  margin-top: 1rem;
+}
+
+#generate-qr-btn:hover {
+  background: var(--secondary);
+}
+
+#qr-container {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#qr-output {
+  width: 200px;
+  height: 200px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.visitor-section {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 1rem auto;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--dark); /* dari root style kamu */
+}
+
+.visitor-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.visitor-count {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.about-section {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
+  margin: 1rem auto 3rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--dark);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.about-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.about-section p {
+  font-size: 1.1rem;
+}
+        
+        /* Color Picker */
+        .color-picker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .color-display {
+            width: 100%;
+            max-width: 300px;
+            height: 150px;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .color-controls {
+            width: 100%;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .color-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .color-input input[type="color"] {
+            -webkit-appearance: none;
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .color-input input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        
+        .color-input input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 0.5rem;
+        }
+        
+        .color-input input[type="text"] {
+            flex: 1;
+            border: none;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--dark);
+            outline: none;
+        }
+        
+        .color-palette {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .palette-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .palette-color:hover {
+            transform: scale(1.1);
+        }
+        
+        /* AI Chat */
+        .chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: white;
+  overflow: hidden;
+}
+
+.chat-header {
+  background: var(--primary);
+  color: white;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 1rem 1rem 0 0;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #f8fafc;
+}
+
+.message {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: 1.25rem;
+  word-wrap: break-word;
+  animation: fadeIn 0.3s ease;
+}
+
+.message.bot {
+  align-self: flex-start;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  color: var(--dark);
+  border-bottom-left-radius: 0.5rem;
+}
+
+.message.user {
+  align-self: flex-end;
+  background: var(--gradient);
+  color: white;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.chat-input {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background-color: white;
+  border-top: 1px solid #e2e8f0;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 2rem;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.chat-input input:focus {
+  border-color: var(--primary);
+}
+
+.chat-input button {
+  background: var(--gradient);
+  color: white;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.chat-input button:hover {
+  transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            nav ul {
+                gap: 0.5rem;
+            }
+            
+            nav a {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .tool-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-tools"></i> 
+                <span>XVO TOOLS</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Tools</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section class="hero">
+            <h1>XVO TOOLS</h1>
+            <p>Kumpulan Tools digital yang memudahkan pekerjaan Anda. Coba berbagai fitur yang kami sediakan untuk membantu aktivitas sehari-hari.</p>
+        </section>
+        
+        <div class="tool-selector">
+            <button class="tool-btn active" data-tool="calculator">
+                <i class="fas fa-calculator"></i> Kalkulator
+            </button>
+            <button class="tool-btn" data-tool="color-picker">
+                <i class="fas fa-palette"></i> Color Picker
+            </button>
+            <button class="tool-btn" data-tool="ai-chat">
+                <i class="fas fa-robot"></i> AI Chat
+            </button>
+            <button class="tool-btn" data-tool="todo-list">
+                <i class="fas fa-tasks"></i> Todo List
+            </button>
+            <button class="tool-btn" data-tool="code-tester">
+                <i class="fas fa-code"></i> Code Tester
+            </button>
+            <button class="tool-btn" data-tool="currency-converter">
+               <i class="fas fa-dollar-sign"></i> Konverter Mata Uang
+            </button>
+            <button class="tool-btn" data-tool="qr-generator">
+              <i class="fas fa-qrcode"></i> QR Code Generator
+           </button>
+        </div>
+        
+        <div class="tool-container">
+            <div class="tool-content active" id="calculator">
+                <div class="calculator">
+                    <div class="calc-display">0</div>
+                    <div class="calc-buttons">
+                        <button class="calc-btn clear">C</button>
+                        <button class="calc-btn operator">±</button>
+                        <button class="calc-btn operator">%</button>
+                        <button class="calc-btn operator">÷</button>
+                        
+                        <button class="calc-btn">7</button>
+                        <button class="calc-btn">8</button>
+                        <button class="calc-btn">9</button>
+                        <button class="calc-btn operator">×</button>
+                        
+                        <button class="calc-btn">4</button>
+                        <button class="calc-btn">5</button>
+                        <button class="calc-btn">6</button>
+                        <button class="calc-btn operator">-</button>
+                        
+                        <button class="calc-btn">1</button>
+                        <button class="calc-btn">2</button>
+                        <button class="calc-btn">3</button>
+                        <button class="calc-btn operator">+</button>
+                        
+                        <button class="calc-btn">0</button>
+                        <button class="calc-btn">.</button>
+                        <button class="calc-btn equals">=</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-content" id="color-picker">
+                <div class="color-picker">
+                    <div class="color-display" id="color-preview" style="background-color: #4f46e5;"></div>
+                    <div class="color-controls">
+                        <div class="color-input">
+                            <input type="color" id="color-input" value="#4f46e5">
+                            <input type="text" id="hex-input" value="#4f46e5" readonly>
+                        </div>
+                        <div class="color-palette">
+                            <div class="palette-color" style="background-color: #ef4444;" data-color="#ef4444"></div>
+                            <div class="palette-color" style="background-color: #f97316;" data-color="#f97316"></div>
+                            <div class="palette-color" style="background-color: #eab308;" data-color="#eab308"></div>
+                            <div class="palette-color" style="background-color: #10b981;" data-color="#10b981"></div>
+                            <div class="palette-color" style="background-color: #06b6d4;" data-color="#06b6d4"></div>
+                            <div class="palette-color" style="background-color: #3b82f6;" data-color="#3b82f6"></div>
+                            <div class="palette-color" style="background-color: #8b5cf6;" data-color="#8b5cf6"></div>
+                            <div class="palette-color" style="background-color: #ec4899;" data-color="#ec4899"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-content" id="currency-converter">
+  <h3 class="tool-title">Konverter Mata Uang</h3>
+
+  <div class="converter-inputs">
+    <input type="number" id="amount" placeholder="Jumlah" value="1" min="0" step="any" />
+
+    <div class="currency-select">
+      <label for="from-currency">Dari Mata Uang:</label>
+      <select id="from-currency"></select>
+    </div>
+
+    <div class="currency-select">
+      <label for="to-currency">Ke Mata Uang:</label>
+      <select id="to-currency"></select>
+    </div>
+
+    <button id="convert-btn">Konversi</button>
+  </div>
+
+  <div id="result" style="margin-top:1rem; font-weight:600;"></div>
+</div>
+            
+            <div class="tool-content" id="todo-list">
+  <div class="todo-app">
+    <h3 class="tool-title">Daftar Tugas</h3>
+    <div class="todo-input-container">
+      <input type="text" id="todo-input" placeholder="Tambahkan tugas baru...">
+      <button id="add-todo-btn">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+    <ul class="todo-list" id="todo-list-items">
+      <!-- Daftar tugas akan muncul di sini -->
+    </ul>
+  </div>
+</div>
+
+<div class="tool-content" id="code-tester">
+  <h3 class="tool-title">Code Snippet Tester</h3>
+  <div class="code-tester-container">
+    <div class="code-inputs">
+      <label for="html-code">HTML</label>
+      <textarea id="html-code" placeholder="Tulis kode HTML di sini..."></textarea>
+      
+      <label for="css-code">CSS</label>
+      <textarea id="css-code" placeholder="Tulis kode CSS di sini..."></textarea>
+      
+      <label for="js-code">JavaScript</label>
+      <textarea id="js-code" placeholder="Tulis kode JavaScript di sini..."></textarea>
+      
+      <button id="run-code-btn">Jalankan Kode</button>
+    </div>
+    <div class="code-preview">
+      <iframe id="preview" sandbox="allow-scripts"></iframe>
+    </div>
+  </div>
+</div>
+
+<div class="tool-content" id="qr-generator">
+  <h3 class="tool-title">QR Code Generator</h3>
+  <label for="qr-input">Masukkan Teks atau URL:</label>
+  <input type="text" id="qr-input" placeholder="Teks atau URL" />
+  <button id="generate-qr-btn">Buat QR Code</button>
+
+  <div id="qr-container" class="qr-container">
+    <!-- QR Code will appear here -->
+    <div id="qr-output" class="qr-output"></div>
+  </div>
+</div>
+            
+            <div class="tool-content" id="ai-chat">
+  <div class="chat-container">
+    <div class="chat-header">
+      <i class="fas fa-robot"></i>
+      <span class="chat-title">XVO AI</span>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="message bot">Halo! Saya asisten AI kamu. Ada yang bisa saya bantu hari ini?</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chat-input" placeholder="Ketik pesan..." autocomplete="off" />
+      <button id="send-btn">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>
+        </div>
+    </main>
+    
+    <section id="about-section" class="about-section" aria-label="Tentang Website">
+  <h2>
+    <i class="fas fa-info-circle"></i> Tentang Website
+  </h2>
+  <p>
+    Website yang menyediakan banyak tools gratis sangat membantu pengguna dalam berbagai kebutuhan sehari-hari dan profesional. Dengan akses mudah tanpa biaya, pengguna dapat memakai berbagai alat mulai dari desain, kalkulator, hingga pengelola waktu secara langsung lewat browser. Website seperti ini biasanya memiliki tampilan sederhana, fitur lengkap, dan terus diperbarui agar tetap relevan. Kehadiran tools gratis online memudahkan pekerjaan dan meningkatkan produktivitas tanpa harus install aplikasi, cocok untuk siapa saja yang ingin solusi cepat dan praktis.
+  </p>
+</section>
+    
+    <section id="visitor-section" class="visitor-section" aria-label="Jumlah Pengunjung">
+  <h2>
+    <i class="fas fa-users"></i> Jumlah Pengunjung
+  </h2>
+  <div id="visitor-count" class="visitor-count">100</div>
+</section>
+    
+    <footer>
+        <div class="container">
+            <p>© 2025 Website Tools Xvoid. Semua hak dilindungi.</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tool Selector
+            const toolBtns = document.querySelectorAll('.tool-btn');
+            const toolContents = document.querySelectorAll('.tool-content');
+            
+            toolBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tool = this.dataset.tool;
+                    
+                    // Remove active class
+                    toolBtns.forEach(btn => btn.classList.remove('active'));
+                    toolContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class
+                    this.classList.add('active');
+                    document.getElementById(tool).classList.add('active');
+                });
+            });
+            
+            // Calculator
+            const display = document.querySelector('.calc-display');
+            const buttons = document.querySelectorAll('.calc-btn');
+            
+            let currentInput = '0';
+            let previousInput = '0';
+            let operation = null;
+            let resetInput = false;
+            
+            function updateDisplay() {
+                display.textContent = currentInput;
+            }
+            
+            function handleNumber(number) {
+                if (currentInput === '0' || resetInput) {
+                    currentInput = number;
+                    resetInput = false;
+                } else {
+                    currentInput += number;
+                }
+            }
+            
+            function handleOperator(operator) {
+                if (operation !== null) {
+                    calculate();
+                }
+                
+                previousInput = currentInput;
+                operation = operator;
+                resetInput = true;
+            }
+            
+            function calculate() {
+                let result;
+                const prev = parseFloat(previousInput);
+                const current = parseFloat(currentInput);
+                
+                if (isNaN(prev) || isNaN(current)) return;
+                
+                switch (operation) {
+                    case '+':
+                        result = prev + current;
+                        break;
+                    case '-':
+                        result = prev - current;
+                        break;
+                    case '×':
+                        result = prev * current;
+                        break;
+                    case '÷':
+                        result = prev / current;
+                        break;
+                    case '%':
+                        result = prev % current;
+                        break;
+                    default:
+                        return;
+                }
+                
+                currentInput = result.toString();
+                operation = null;
+            }
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const value = this.textContent;
+                    
+                    if (!isNaN(value) || value === '.') {
+                        handleNumber(value);
+                        updateDisplay();
+                    } else if (value === 'C') {
+                        currentInput = '0';
+                        previousInput = '0';
+                        operation = null;
+                        updateDisplay();
+                    } else if (value === '=') {
+                        calculate();
+                        updateDisplay();
+                    } else if (value === '±') {
+                        currentInput = (parseFloat(currentInput) * -1).toString();
+                        updateDisplay();
+                    } else if (['+', '-', '×', '÷', '%'].includes(value)) {
+                        handleOperator(value);
+                        updateDisplay();
+                    }
+                });
+            });
+            
+            // Code Snippet Tester
+const runBtn = document.getElementById('run-code-btn');
+const previewFrame = document.getElementById('preview');
+const htmlCode = document.getElementById('html-code');
+const cssCode = document.getElementById('css-code');
+const jsCode = document.getElementById('js-code');
+
+function runCode() {
+  const html = htmlCode.value;
+  const css = `<style>${cssCode.value}</style>`;
+  const js = `<script>${jsCode.value}<\/script>`;
+  
+  const source = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      ${css}
+    </head>
+    <body>
+      ${html}
+      ${js}
+    </body>
+    </html>
+  `;
+  
+  previewFrame.srcdoc = source;
+}
+
+runBtn.addEventListener('click', runCode);
+
+// Optional: Jalankan otomatis saat mengetik (bisa diaktifkan jika mau)
+// htmlCode.addEventListener('input', runCode);
+// cssCode.addEventListener('input', runCode);
+// jsCode.addEventListener('input', runCode);
+
+// Inisialisasi preview kosong
+runCode();
+            
+            // Todo List Functionality
+const todoInput = document.getElementById('todo-input');
+const addTodoBtn = document.getElementById('add-todo-btn');
+const todoListItems = document.getElementById('todo-list-items');
+
+// Load stored todos if available
+let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+function renderTodos() {
+  todoListItems.innerHTML = '';
+
+  todos.forEach((todo, index) => {
+    const todoItem = document.createElement('li');
+    todoItem.classList.add('todo-item');
+
+    const todoItemText = document.createElement('div');
+    todoItemText.classList.add('todo-item-text');
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.classList.add('todo-checkbox');
+    checkbox.checked = todo.completed;
+    checkbox.addEventListener('change', () => toggleTodo(index));
+
+    const todoText = document.createElement('span');
+    todoText.classList.add('todo-text');
+    if (todo.completed) {
+      todoText.classList.add('completed');
+    }
+    todoText.textContent = todo.text;
+
+    const deleteBtn = document.createElement('span');
+    deleteBtn.classList.add('delete-todo');
+    deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+    deleteBtn.addEventListener('click', () => deleteTodo(index));
+
+    todoItemText.appendChild(checkbox);
+    todoItemText.appendChild(todoText);
+
+    todoItem.appendChild(todoItemText);
+    todoItem.appendChild(deleteBtn);
+
+    todoListItems.appendChild(todoItem);
+  });
+}
+
+function addTodo() {
+  const todoText = todoInput.value.trim();
+  if (todoText === '') return;
+
+  todos.push({
+    text: todoText,
+    completed: false
+  });
+
+  saveTodos();
+  todoInput.value = '';
+  renderTodos();
+}
+
+function toggleTodo(index) {
+  todos[index].completed = !todos[index].completed;
+  saveTodos();
+  renderTodos();
+}
+
+function deleteTodo(index) {
+  todos.splice(index, 1);
+  saveTodos();
+  renderTodos();
+}
+
+function saveTodos() {
+  localStorage.setItem('todos', JSON.stringify(todos));
+}
+
+addTodoBtn.addEventListener('click', addTodo);
+
+todoInput.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    addTodo();
+  }
+});
+
+// Initial render
+renderTodos();
+            
+            // Color Picker
+            const colorInput = document.getElementById('color-input');
+            const hexInput = document.getElementById('hex-input');
+            const colorPreview = document.getElementById('color-preview');
+            const paletteColors = document.querySelectorAll('.palette-color');
+            
+            colorInput.addEventListener('input', function() {
+                const color = this.value;
+                updateColor(color);
+            });
+            
+            paletteColors.forEach(color => {
+                color.addEventListener('click', function() {
+                    const colorValue = this.dataset.color;
+                    updateColor(colorValue);
+                });
+            });
+            
+            function updateColor(color) {
+                colorPreview.style.backgroundColor = color;
+                hexInput.value = color;
+                colorInput.value = color;
+            }
+            
+            const visitorCountEl = document.getElementById('visitor-count');
+let visitorCount = 100; // mulai dari 100
+
+function updateVisitorCount() {
+  // Acak perubahan antara -3 sampai +5
+  const change = Math.floor(Math.random() * 9) - 3; // nilai dari -3 sampai +5
+
+  visitorCount += change;
+
+  // Batas minimal 50 agar tidak terlalu kecil
+  if (visitorCount < 50) visitorCount = 50;
+
+  visitorCountEl.textContent = visitorCount.toLocaleString('id-ID');
+}
+
+// Update pertama
+updateVisitorCount();
+
+// Update setiap 1 detik (1000 ms)
+setInterval(updateVisitorCount, 1000);
+            
+            // AI Chat
+            const chatMessages = document.getElementById('chat-messages');
+const chatInput = document.getElementById('chat-input');
+const sendBtn = document.getElementById('send-btn');
+
+function addMessage(message, sender) {
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('message', sender);
+  messageElement.textContent = message;
+  chatMessages.appendChild(messageElement);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function sendMessage() {
+  const message = chatInput.value.trim();
+  if (message === '') return;
+
+  addMessage(message, 'user');
+  chatInput.value = '';
+
+  try {
+    const response = await fetch('http://localhost:8158/api/chat', {  // ganti URL ke backend kamu
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
+    });
+
+    const data = await response.json();
+
+    if (data.reply) {
+      addMessage(data.reply.trim(), 'bot');
+    } else {
+      addMessage('Maaf, saya tidak dapat memahami pertanyaan Anda.', 'bot');
+    }
+  } catch (error) {
+    addMessage('Terjadi kesalahan saat menghubungi server.', 'bot');
+    console.error(error);
+  }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+
+chatInput.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    sendMessage();
+                }
+            });
+        });
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+  const amountInput = document.getElementById('amount');
+  const fromCurrency = document.getElementById('from-currency');
+  const toCurrency = document.getElementById('to-currency');
+  const convertBtn = document.getElementById('convert-btn');
+  const resultDiv = document.getElementById('result');
+
+  const currencies = ['USD', 'EUR', 'IDR', 'JPY', 'GBP', 'AUD', 'CAD', 'CHF', 'CNY', 'SGD'];
+
+  function populateCurrencySelect(select) {
+    currencies.forEach(code => {
+      const option = document.createElement('option');
+      option.value = code;
+      option.textContent = code;
+      select.appendChild(option);
+    });
+  }
+
+  populateCurrencySelect(fromCurrency);
+  populateCurrencySelect(toCurrency);
+
+  fromCurrency.value = 'USD';
+  toCurrency.value = 'IDR';
+
+  convertBtn.addEventListener('click', () => {
+    const amount = parseFloat(amountInput.value);
+    if (isNaN(amount) || amount <= 0) {
+      alert('Masukkan jumlah yang valid.');
+      return;
+    }
+
+    const from = fromCurrency.value;
+    const to = toCurrency.value;
+
+    resultDiv.textContent = 'Menghitung...';
+
+    fetch(`https://open.er-api.com/v6/latest/${from}`)
+  .then(response => response.json())
+  .then(data => {
+    if (data.result !== 'success') {
+      throw new Error('Gagal mendapatkan data nilai tukar.');
+    }
+    const rate = data.rates[to];
+    if (!rate) {
+      throw new Error('Mata uang tujuan tidak ditemukan.');
+    }
+    const converted = (amount * rate).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const amountFormatted = amount.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    resultDiv.textContent = `${amountFormatted} ${from} = ${converted} ${to}`;
+  })
+  .catch(error => {
+    resultDiv.textContent = 'Terjadi kesalahan: ' + error.message;
+  });
+  });
+});
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+  const qrInput = document.getElementById('qr-input');
+  const generateBtn = document.getElementById('generate-qr-btn');
+  const qrOutput = document.getElementById('qr-output');
+
+  // Memuat library QRCode.js
+  const QRCode = window.QRCode;
+
+  // Fungsi untuk menghasilkan QR Code
+  generateBtn.addEventListener('click', () => {
+    const text = qrInput.value.trim();
+    if (!text) {
+      alert('Silakan masukkan teks atau URL.');
+      return;
+    }
+
+    qrOutput.innerHTML = ''; // Clear previous QR Code
+
+    // Membuat QR code baru
+    const qr = new QRCode(qrOutput, {
+      text: text,
+      width: 200,
+      height: 200,
+      colorDark: '#000000',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  });
+});
+    </script>
+</body>
+</html>
