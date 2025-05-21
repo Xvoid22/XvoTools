@@ -1518,7 +1518,7 @@ async function sendMessage() {
   chatInput.value = '';
 
   try {
-    const response = await fetch('http://localhost:8158/api/chat', {  // ganti URL ke backend kamu
+    const response = await fetch('http://localhost:3000/api/chat', {  // ganti URL ke backend kamu
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
